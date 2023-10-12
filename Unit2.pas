@@ -9,7 +9,7 @@ uses
 
 type
   TForm2 = class(TForm)
-    StaticText1: TStaticText;
+    Timer1: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure IdleHandler(transmitter: TObject; var Done: Boolean);
     procedure FormResize(Sender: TObject);
@@ -33,8 +33,7 @@ type
 
 var
   Form2: TForm2;
-  transmitter: TObject;
-
+  test: Integer = 0;
   NearClipping: Single = 1.0; // Initialize NearClipping to 1.0 globally
   FarClipping: Single = 1000.0; // Initialize FarClipping to 1000.0 globally
 
@@ -45,12 +44,16 @@ implementation
 procedure TForm2.FormCreate(Sender: TObject);
 begin
   DC := GetDC(handle);
-  if not InitOpenGL then
+  if InitOpenGL then
+  begin
+    RC := CreateRenderingContext(DC, [opDoubleBuffered], 32, 24, 0, 0, 0, 0);
+    ActivateRenderingContext(DC, RC);
+    SetupGL;
+    Application.OnIdle := IdleHandler;
+    Init; // where i init the  Application.OnIdle := IdleHandler;
+  end
+  else
     ShowMessage('OpenGL initialization failed');
-  RC := CreateRenderingContext(DC, [opDoubleBuffered], 32, 24, 0, 0, 0, 0);
-  ActivateRenderingContext(DC, RC);
-  SetupGL;
-  Init;
 end;
 
 procedure TForm2.SetupGL;
@@ -60,9 +63,14 @@ begin
   glEnable(GL_CULL_FACE); // activate backface culling
 end;
 
+
 procedure TForm2.ErrorHandler;
 begin
-  Form2.Caption := gluErrorString(glGetError);
+  if gluErrorString(glGetError) <> 'no error' then
+  begin
+    Form2.Caption := gluErrorString(glGetError);
+  end;
+
 end;
 
 procedure TForm2.FormDestroy(Sender: TObject);
@@ -86,7 +94,7 @@ begin
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity;
-  IdleHandler(transmitter, tmpBool);
+  IdleHandler(nil, tmpBool);
 end;
 
 procedure TForm2.Init;
@@ -123,14 +131,9 @@ begin
 end;
 
 procedure TForm2.IdleHandler(transmitter: TObject; var Done: Boolean);
-var
-  test: Integer;
 begin
-  test := 1;
   StartTime := GetTickCount;
   Render;
-  StaticText1.Caption := test.ToString;
-  test := test + 1;
 
   DrawTime := GetTickCount - StartTime;
   Inc(TimeCount, DrawTime);
@@ -138,12 +141,10 @@ begin
 
   if TimeCount >= 1000 then
   begin
-
-    StaticText1.Caption := 'test';
     Frames := FrameCount;
     TimeCount := TimeCount - 1000;
     FrameCount := 0;
-    Caption := InttoStr(Frames) + 'FPS';
+    Caption := InttoStr(Frames) + 'FPSjes';
     ErrorHandler;
   end;
 

@@ -14,12 +14,8 @@ object Form2: TForm2
   OnDestroy = FormDestroy
   OnResize = FormResize
   TextHeight = 15
-  object StaticText1: TStaticText
-    Left = 752
-    Top = 120
-    Width = 97
-    Height = 41
-    Caption = 'StaticText1'
-    TabOrder = 0
+  object Timer1: TTimer
+    Left = 464
+    Top = 288
   end
 end
