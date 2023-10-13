@@ -110,29 +110,35 @@ begin
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity;
   gluPerspective(45.0, ClientWidth / ClientHeight, NearClipping, FarClipping);
-
   glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity;
 
-  glTranslatef(0, 0, -5);
 
-  glBegin(GL_QUADS);
-  glColor3f(1, 0, 0);
-  glVertex3f(0, 0, 0);
-  glColor3f(0, 1, 0);
-  glVertex3f(1, 0, 0);
-  glColor3f(0, 0, 1);
-  glVertex3f(1, 1, 0);
-  glColor3f(1, 1, 0);
-  glVertex3f(0, 1, 0);
-  glend;
+glLoadIdentity(); // Resets the current matrix to the identity matrix.
+glTranslatef(0, 0, -10); // Translates the entire world closer to the camera.
 
-  //triangle
-  glBegin(GL_TRIANGLES);
-  glColor3f(1,0,0); glVertex3f(-1,-1, 0);
-  glColor3f(1,0,1); glVertex3f( 1,-1, 0);
-  glColor3f(1,1,0); glVertex3f( 0, 1, 0);
-  glend;
+glPushMatrix(); // Saves the current matrix state on a new paper (matrix) to draw the first triangle.
+glTranslatef(-2, 0, 0); // Shifts the world (current matrix) to the left.
+glBegin(GL_TRIANGLES); // Begins drawing the first triangle on the current matrix.
+  glColor3f(1, 0, 0); glVertex3f(-1, -1, 0);
+  glColor3f(0, 0, 1); glVertex3f(1, -1, 0);
+  glColor3f(0, 1, 0); glVertex3f(0, 1, 0);
+glEnd(); // Finishes drawing.
+
+glPopMatrix(); // Removes the saved matrix state (paper) from the stack.
+
+glPushMatrix(); // Save the current matrix state again on another new paper (matrix) for the second triangle.
+glTranslatef(2, 0, 0); // Shifts the world (current matrix) to the right.
+glBegin(GL_TRIANGLES); // Begins drawing the second triangle on the current matrix.
+  glColor3f(1, 1, 0); glVertex3f(-1, -1, 0);
+  glColor3f(1, 0, 1); glVertex3f(1, -1, 0);
+  glColor3f(0, 1, 1); glVertex3f(0, 1, 0);
+glEnd(); // Finishes drawing.
+
+glPopMatrix(); // Removes the saved matrix state for the second triangle.
+
+
+
+//https://wiki.delphigl.com/index.php/Tutorial_Lektion_3
 
 
   SwapBuffers(DC);
